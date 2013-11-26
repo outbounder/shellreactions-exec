@@ -1,0 +1,15 @@
+{
+  "name": "shellreactions-exec",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine-node ./tests/"
+  },
+  "dependencies": {
+    "shelljs": "0.2.6"
+  },
+  "devDependencies": {
+    "jasmine-node": "1.11.0"
+  },
+  "license": "MIT"
+}
