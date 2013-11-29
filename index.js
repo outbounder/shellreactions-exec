@@ -23,8 +23,9 @@ module.exports = function(c, next){
   }
 
   if(c.verbose)
-    console.info("shell exec", c.cmd, c.cmdOptions)
-  
+    console.info("[shell exec start]", c.cmd, c.cmdData)
+  if(c.dontExecute)
+    return next(null, false)
   var childProcess = exec(c.cmd, c.cmdOptions)
 
   if(c.waitForExit) {
@@ -37,6 +38,8 @@ module.exports = function(c, next){
       buffer += chunk.toString()
     })
     childProcess.on("close", function(code){
+      if(c.verbose)
+        console.info("[shell exec close]", c.cmd, buffer, code)
       next(code != 0?new Error(buffer):null, buffer)
     })
   } else
@@ -49,7 +52,10 @@ module.exports.exec = function(cmdPattern, cmdData, next) {
     waitForExit: true
   }
   if(cmdData && next) {
-    c.cmdData = cmdData
+    if(cmdData.cmdData)
+      _.extend(c, cmdData)
+    else
+      c.cmdData = cmdData
     module.exports(c, next)
   } else {
     return function(input, next) {
@@ -63,7 +69,10 @@ module.exports.start = function(cmdPattern, cmdData, next) {
     cmdPattern: cmdPattern
   }
   if(cmdData && next) {
-    c.cmdData = cmdData
+    if(cmdData.cmdData)
+      _.extend(c, cmdData)
+    else
+      c.cmdData = cmdData
     module.exports(c, next)
   } else {
     return function(input, next) {

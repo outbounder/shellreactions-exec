@@ -40,7 +40,8 @@ Example:
       cmdOptions: Object,
       cmdData: Object,
       verbose: Boolean,
-      waitForExit: Boolean
+      waitForExit: Boolean,
+      dontExecute: Boolean
     }
 
 * `cmd` - not needed if `cmdPattern` is used. 
@@ -62,6 +63,10 @@ The result of the reaction will be the combined stderr and stdout of
 the closed child process. If the child process exits with code different 
 than `0`, it is assumed as Error.
 
+* `dontExecute` - optional
+When set will not execute the produced `cmd`, but will just call `next(false, false)`.
+Useful for debugging purposes ;)
+
 #### `next` reaction handler form
 
     function(err, result){
@@ -71,9 +76,9 @@ than `0`, it is assumed as Error.
 
 ### exec helper
 
-    require("shellreactions-exec").exec(cmdPattern [, cmdData, next])
+    require("shellreactions-exec").exec(cmdPattern [, options, next])
 
-Example:
+Examples:
 
     var exec = require("shellreactions-exec").exec
     exec("echo test", {}, function(err, result){
@@ -84,26 +89,25 @@ Example:
       // result == "test"
     })
 
+    exec(["echo {value}","echo {value}2"], {value: "test"}, function(err, result){
+      // result is Array["test","test2"]
+    })
+
+    var options = {
+      cmdData: { value: "test" },
+      verbose: true
+    }
+    exec("echo {value}", options, function(){...})
+
+    var reaction = require("shellreactions-exec").exec("echo {value}")
+    reaction({value: "test"}, function(err, result){ ... })
+
 Executes commands and waits them to finish by aggregating the 
 stderr and stdout output.
 
-* `cmdPattern` - String || Array
-When array is passed, it is transformed via `.join(" && ")` to a String.
-Then `{placeholders}` are replaced with values from `cmdData`
-
-If `cmdData` and `next` are not given, then this helper returns a reaction
-function. 
-
-    var function = require("shellreactions-exec").exec("echo {value}")
-    function({value: "test"}, function(err, result){ ... })
-
-Calling it will trigger its execution as reaction, where `c` extends 
-initial reaction input created from `cmdPattern`. See last example 
-for details.
-
 ### start helper
 
-    require("shellreaactions-exec").start(cmdPattern [, cmdData, next])
+    require("shellreaactions-exec").start(cmdPattern [, options, next])
 
 Example:
 
@@ -120,12 +124,12 @@ Example:
 Executes commands and returns a ChildProcess as result of `next`. 
 This doesn't waits for commands to finish.
 
-This helper has the same behaviour like the the `exec` described above 
-in regards to `cmdData` and `next`.
-
 ### ssh_exec helper
 
-    require("shellreactions-exec").ssh_exec(remote, cmdPattern [, cmdData, next])
+    require("shellreactions-exec").ssh_exec(remote, cmdPattern [, options, next])
+
+* `remote` - String
+The passed value will be used to get from `cmdData` the corresponding remote server
 
 Example:
 
@@ -140,9 +144,6 @@ Example:
 
 Executes commands to `cmdData[remote]` and waits for them to exit. 
 This is wrapper of `exec` helper, however it executes all the commands via `ssh`.
-
-* `remote` - String
-The passed value will be used to get from `cmdData` the corresponding remote server
 
 The helper generates a single command in form:
 
