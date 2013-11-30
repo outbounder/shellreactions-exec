@@ -1,13 +1,13 @@
 {
   "name": "shellreactions-exec",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "index.js",
   "scripts": {
     "test": "jasmine-node ./tests/"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/outbounder/shellreactions-exec.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/outbounder/shellreactions-exec.git"
   },
   "dependencies": {
     "string-template": "0.1.3",
