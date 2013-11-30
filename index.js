@@ -15,16 +15,29 @@ var _ = require("underscore")
     * result: String || ChildProcess
 */
 module.exports = function(c, next){
-  if(c.cmd)
-    if(Array.isArray(c.cmd))
-      c.cmd = c.cmd.join(" && ")
+  if(Array.isArray(c.cmd))
+    c.cmd = c.cmd.join(" && ")
   c.cmd = format(c.cmd, c.cmdData)
 
-  if(c.verbose)
-    console.info("[shell exec start]", c.cmd, c.cmdData)
+  if(c.report)
+    c.report(exec, c.cmd, c.cmdData)
+  
   if(c.dontExecute)
     return next(null, false)
+
   var childProcess = exec(c.cmd, c.cmdOptions)
+
+  if(c.output) {
+    childProcess.stdout.pipe(c.output)
+    childProcess.stderr.pipe(c.output)
+  }
+
+  if(c.input) {
+    c.input.pipe(childProcess.stdin)
+    childProcess.on("close", function(code){
+      c.input.unpipe(childProcess.stdin)
+    })
+  }
 
   if(c.waitForExit) {
     var buffer = ""
@@ -36,8 +49,8 @@ module.exports = function(c, next){
       buffer += chunk.toString()
     })
     childProcess.on("close", function(code){
-      if(c.verbose)
-        console.info("[shell exec close]", c.cmd, buffer, code)
+      if(c.report)
+        c.report(childProcess, code, buffer)
       next(code != 0?new Error(buffer):null, buffer)
     })
   } else
