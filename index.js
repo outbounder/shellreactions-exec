@@ -5,7 +5,6 @@ var _ = require("underscore")
 /*
   * Input 'c' : Object
     * cmd: String
-    * cmdPattern: String || Array
     * cmdData: Object
     * cmdOptions: Object
     * verbose: Boolean
@@ -16,11 +15,10 @@ var _ = require("underscore")
     * result: String || ChildProcess
 */
 module.exports = function(c, next){
-  if(c.cmdPattern) {
-    if(Array.isArray(c.cmdPattern))
-      c.cmdPattern = c.cmdPattern.join(" && ")
-    c.cmd = format(c.cmdPattern, c.cmdData)
-  }
+  if(c.cmd)
+    if(Array.isArray(c.cmd))
+      c.cmd = c.cmd.join(" && ")
+  c.cmd = format(c.cmd, c.cmdData)
 
   if(c.verbose)
     console.info("[shell exec start]", c.cmd, c.cmdData)
@@ -46,9 +44,9 @@ module.exports = function(c, next){
     next(null, childProcess)
 }
 
-module.exports.exec = function(cmdPattern, cmdData, next) {
+module.exports.exec = function(cmd, cmdData, next) {
   var c = {
-    cmdPattern: cmdPattern,
+    cmd: cmd,
     waitForExit: true
   }
   if(cmdData && next) {
@@ -64,9 +62,9 @@ module.exports.exec = function(cmdPattern, cmdData, next) {
   }
 }
 
-module.exports.start = function(cmdPattern, cmdData, next) {
+module.exports.start = function(cmd, cmdData, next) {
   var c = {
-    cmdPattern: cmdPattern
+    cmd: cmd
   }
   if(cmdData && next) {
     if(cmdData.cmdData)
@@ -82,14 +80,14 @@ module.exports.start = function(cmdPattern, cmdData, next) {
 }
 
 
-module.exports.ssh_exec = function(remote, cmdPattern, cmdData, next) {
-  if(Array.isArray(cmdPattern))
-    cmdPattern = cmdPattern.join(" && ")
-  return module.exports.exec("ssh {"+remote+"} '"+cmdPattern+"'", cmdData, next)
+module.exports.ssh_exec = function(remote, cmd, cmdData, next) {
+  if(Array.isArray(cmd))
+    cmd = cmd.join(" && ")
+  return module.exports.exec("ssh {"+remote+"} '"+cmd+"'", cmdData, next)
 }
 
-module.exports.ssh_start = function(remote, cmdPattern, cmdData, next) {
-  if(Array.isArray(cmdPattern))
-    cmdPattern = cmdPattern.join(" && ")
-  return module.exports.start("ssh {"+remote+"} '"+cmdPattern+"'", cmdData, next)
+module.exports.ssh_start = function(remote, cmd, cmdData, next) {
+  if(Array.isArray(cmd))
+    cmd = cmd.join(" && ")
+  return module.exports.start("ssh {"+remote+"} '"+cmd+"'", cmdData, next)
 }

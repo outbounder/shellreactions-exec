@@ -16,7 +16,7 @@ describe("shellreactions-exec reaction", function(){
     describe("as string", function(){
       it("executes echo command template", function(next){
         reaction({
-          cmdPattern: "echo {variable}", 
+          cmd: "echo {variable}", 
           cmdData: {variable: "test"}
         }, function(err, child){
           child.on("data", function(chunk){
@@ -31,7 +31,7 @@ describe("shellreactions-exec reaction", function(){
 
       it("executes echo command template and waits for exit", function(next){
         reaction({
-          cmdPattern: "echo {variable}", 
+          cmd: "echo {variable}", 
           cmdData: {variable: "test"},
           waitForExit: true
         }, function(err, result){
@@ -45,7 +45,7 @@ describe("shellreactions-exec reaction", function(){
     describe("as array", function(){
       it("executes echo commands and waits for exit", function(next){
         reaction({
-          cmdPattern: ["echo {variable1}", "echo {variable2}"],
+          cmd: ["echo {variable1}", "echo {variable2}"],
           cmdData: {variable1: "test1", variable2: "test2"},
           waitForExit: true
         }, function(err, output){

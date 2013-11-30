@@ -22,7 +22,7 @@ Example:
     })
 
     reaction({
-      cmdPattern: "echo {value}",
+      cmd: "echo {value}",
       cmdData: {
         value: "test"
       },
@@ -35,8 +35,7 @@ Example:
 #### `c` reaction input
 
     {
-      cmd: String,
-      cmdPattern: String || Array,
+      cmd: String || Array,
       cmdOptions: Object,
       cmdData: Object,
       verbose: Boolean,
@@ -44,12 +43,12 @@ Example:
       dontExecute: Boolean
     }
 
-* `cmd` - not needed if `cmdPattern` is used. 
-This is the value passed to `chidl_process.exec(value)`
-
-* `cmdPattern` - optional, if set will override `cmd`. 
+* `cmd` - This is the value passed to `chidl_process.exec(value)`
 Any `{placeholder}` will be replaced with the correspnding value from 
 the `cmdData` object.
+
+* `cmdData` - optional Object containing command related data. 
+Keys from it are replaced in `cmd` with their values.
 
 * `cmdOptions` - optional
 If set will be directly passed to `child_process.exec(value, options)`
@@ -76,7 +75,7 @@ Useful for debugging purposes ;)
 
 ### exec helper
 
-    require("shellreactions-exec").exec(cmdPattern [, options, next])
+    require("shellreactions-exec").exec(cmd [, options, next])
 
 Examples:
 
@@ -107,7 +106,7 @@ stderr and stdout output.
 
 ### start helper
 
-    require("shellreaactions-exec").start(cmdPattern [, options, next])
+    require("shellreaactions-exec").start(cmd [, options, next])
 
 Example:
 
@@ -126,7 +125,7 @@ This doesn't waits for commands to finish.
 
 ### ssh_exec helper
 
-    require("shellreactions-exec").ssh_exec(remote, cmdPattern [, options, next])
+    require("shellreactions-exec").ssh_exec(remote, cmd [, options, next])
 
 * `remote` - String
 The passed value will be used to get from `cmdData` the corresponding remote server
@@ -151,7 +150,7 @@ The helper generates a single command in form:
 
 ### ssh_start helper
 
-    require("shellreactions-exec").ssh_start(remote, cmdPattern [, cmdData, next])
+    require("shellreactions-exec").ssh_start(remote, cmd [, cmdData, next])
 
 Example:
 
