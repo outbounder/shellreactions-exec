@@ -18,9 +18,6 @@ module.exports = function(c, next){
   if(Array.isArray(c.cmd))
     c.cmd = c.cmd.join(" && ")
   c.cmd = format(c.cmd, c.cmdData)
-
-  if(c.report)
-    c.report(exec, c.cmd, c.cmdData)
   
   if(c.dontExecute)
     return next(null, false)
