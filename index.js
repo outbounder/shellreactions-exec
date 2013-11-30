@@ -29,13 +29,6 @@ module.exports = function(c, next){
     childProcess.stderr.pipe(c.output)
   }
 
-  if(c.input) {
-    c.input.pipe(childProcess.stdin)
-    childProcess.on("close", function(code){
-      c.input.unpipe(childProcess.stdin)
-    })
-  }
-
   if(c.waitForExit) {
     var buffer = ""
     childProcess.on("error", next)

@@ -38,7 +38,7 @@ Example:
       cmd: String || Array,
       cmdOptions: Object,
       cmdData: Object,
-      verbose: Boolean,
+      output: Stream,
       waitForExit: Boolean,
       dontExecute: Boolean
     }
@@ -53,8 +53,8 @@ Keys from it are replaced in `cmd` with their values.
 * `cmdOptions` - optional
 If set will be directly passed to `child_process.exec(value, options)`
 
-* `verbose` - optional
-Will `console.info` the `cmd` value before executing.
+* `output` - optional Stream
+ChildProcess stdout and stderr will be pipe'd to `output` if present.
 
 * `waitForExit` - optional
 When set will wait the childProcess to close. 
