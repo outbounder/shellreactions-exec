@@ -28,6 +28,8 @@ module.exports = function(c, next){
     childProcess.stdout.pipe(c.output)
     childProcess.stderr.pipe(c.output)
   }
+  if(c.input)
+    c.input.pipe(childProcess.stdin)
 
   if(c.waitForExit) {
     var buffer = ""
@@ -41,6 +43,10 @@ module.exports = function(c, next){
     childProcess.on("close", function(code){
       if(c.report)
         c.report(childProcess, code, buffer)
+      if(c.input) {
+        c.input.unpipe(childProcess.stdin)
+        childProcess.stdin.end()
+      }
       next(code != 0?new Error(buffer):null, buffer)
     })
   } else
